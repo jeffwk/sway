@@ -1358,7 +1358,9 @@ void container_detach(struct sway_container *child) {
 		// We may have removed the last tiling child from the workspace. If the
 		// workspace layout was e.g. tabbed, then at this point it may be just
 		// H[]. So, reset it to the default (e.g. T[]) for next time.
-		if (!old_workspace->tiling->length) {
+		// But if we are evacuating a workspace with only sticky floating
+		// containers, the workspace will already be detached from the output.
+		if (old_workspace->output && !old_workspace->tiling->length) {
 			old_workspace->layout =
 				output_get_default_layout(old_workspace->output);
 		}
@@ -1410,6 +1412,13 @@ struct sway_container *container_split(struct sway_container *child,
 		enum sway_container_layout layout) {
 	struct sway_seat *seat = input_manager_get_default_seat();
 	bool set_focus = (seat_get_focus(seat) == &child->node);
+
+	if (container_is_floating(child) && child->view) {
+		view_set_tiled(child->view, true);
+		if (child->view->using_csd) {
+			child->border = child->saved_border;
+		}
+	}
 
 	struct sway_container *cont = container_create(NULL);
 	cont->width = child->width;

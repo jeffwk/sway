@@ -182,6 +182,12 @@ struct seat_attachment_config {
     // TODO other things are configured here for some reason
 };
 
+enum seat_config_hide_cursor_when_typing {
+	HIDE_WHEN_TYPING_DEFAULT, // the default is currently disabled
+	HIDE_WHEN_TYPING_ENABLE,
+	HIDE_WHEN_TYPING_DISABLE,
+};
+
 enum seat_config_allow_constrain {
     CONSTRAIN_DEFAULT, // the default is currently enabled
     CONSTRAIN_ENABLE,
@@ -213,18 +219,19 @@ enum sway_input_idle_source {
  * Options for multiseat and other misc device configurations
  */
 struct seat_config {
-    char *name;
-    int fallback; // -1 means not set
-    list_t *attachments; // list of seat_attachment configs
-    int hide_cursor_timeout;
-    enum seat_config_allow_constrain allow_constrain;
-    enum seat_config_shortcuts_inhibit shortcuts_inhibit;
-    enum seat_keyboard_grouping keyboard_grouping;
-    uint32_t idle_inhibit_sources, idle_wake_sources;
-    struct {
-        char *name;
-        int size;
-    } xcursor_theme;
+	char *name;
+	int fallback; // -1 means not set
+	list_t *attachments; // list of seat_attachment configs
+	int hide_cursor_timeout;
+	enum seat_config_hide_cursor_when_typing hide_cursor_when_typing;
+	enum seat_config_allow_constrain allow_constrain;
+	enum seat_config_shortcuts_inhibit shortcuts_inhibit;
+	enum seat_keyboard_grouping keyboard_grouping;
+	uint32_t idle_inhibit_sources, idle_wake_sources;
+	struct {
+		char *name;
+		int size;
+	} xcursor_theme;
 };
 
 enum config_dpms {
